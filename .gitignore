@@ -1,2 +1,4 @@
 .tldr
 .vscode-ctags
+.env
+.ruff_cache

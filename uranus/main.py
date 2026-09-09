@@ -2,9 +2,12 @@
 #
 # vim: set ts=8 sw=8 noet tw=80 cc=80 fo+=t :
 
+import utils.cli as cli
+
 
 def main():
-    print("hello world from Uranus project")
+    # launch the cli
+    cli.cli()
 
 
 if __name__ == "__main__":
