@@ -1,2 +1,2 @@
 # Uranus
-a script framework for hardening on linux palateform
+A scripting framework for hardening Debian platforms
