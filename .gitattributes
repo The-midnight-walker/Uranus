@@ -1,0 +1,64 @@
+# SPDX-License-Identifier: GPL-2.0
+#
+# vim: set ts=8 sw=8 noet tw=80 cc=80 fo+=t :
+#
+# ==========================================
+# Global line ending management (CRLF vs LF)
+# ==========================================
+# Automatic normalization by default: Git converts to LF on commit
+
+* text=auto eol=lf
+
+# ===============================
+# Source files and semantic diffs
+# ===============================
+# Enable display of Python function/class names in "git diff"
+
+*.py text diff=python eol=lf
+
+# Shell scripts and Makefiles (strictly LF, otherwise bash may crash with \r)
+
+*.sh text eol=lf
+Makefile text eol=lf
+*.mk text eol=lf
+
+# Documentation and configuration files
+
+*.md text eol=lf
+*.toml text eol=lf
+*.ini text eol=lf
+*.yaml text eol=lf
+*.yml text eol=lf
+*.json text eol=lf
+*.txt text eol=lf
+
+# ======================================================
+# Binary files (no line ending conversion, no text diff)
+# ======================================================
+
+*.pcap binary
+*.pcapng binary
+*.cap binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.ico binary
+*.pdf binary
+*.tar.gz binary
+*.zip binary
+
+# Certificates and keys
+
+*.crt text eol=lf
+*.pem text eol=lf
+*.key text eol=lf
+
+# ===================================================
+# Release exclusion (export-ignore for 'git archive')
+# ===================================================
+
+.gitattributes export-ignore
+.gitignore export-ignore
+.ruff_cache export-ignore
+tests/ export-ignore
+scripts/ export-ignore

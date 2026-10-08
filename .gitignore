@@ -1,2 +1,28 @@
-.tldr
+# SPDX-License-Identifier: GPL-2.0
+#
+# vim: set ts=8 sw=8 noet tw=80 cc=80 fo+=t :
+#
+# Bytecode et Python caches
+__pycache__/
+*.py[cod]
+*$py.class
+.ruff_cache/
+.pytest_cache/
+
+# virtual environments
+.venv/
+env/
+venv/
+ENV/
+
+# keys and local configurations
+.env
+*.pem
+*.key
+*.crt
+
+# logs
+*.log
+
 .vscode-ctags
+trash/
