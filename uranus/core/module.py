@@ -2,9 +2,11 @@
 #
 # vim: set ts=8 sw=8 noet tw=80 cc=80 fo+=t :
 
-import click
 import logging as log
-from utils.formats import User
+import click
+
+from modules.credentials.module import cred
+from uranus.core.users import User
 
 """
     ROOT/CORE MODULE & CLI UTILITIES INITIALIZATION
@@ -16,7 +18,7 @@ from utils.formats import User
 """
 
 
-@click.group(name="root")
+@click.group(name="root", invoke_without_command=True)
 @click.option(
     "-v",
     "--verbose",
@@ -40,7 +42,8 @@ def cli(ctx: click.Context, verbose: bool, color: bool) -> None:
         ╚██████╔╝ ██║  ██║ ██║  ██║ ██║ ╚████║ ╚██████╔╝ ███████║
          ╚═════╝  ╚═╝  ╚═╝ ╚═╝  ╚═╝ ╚═╝  ╚═══╝  ╚═════╝  ╚══════╝
 
-    A scripting framework for hardening GNU/Linux Debian (13 - Trixie) distribution
+    A scripting framework for hardening GNU/Linux Debian (13 - Trixie)
+    distribution
     """
 
     ctx.ensure_object(dict)
@@ -52,3 +55,12 @@ def cli(ctx: click.Context, verbose: bool, color: bool) -> None:
 
     ctx.obj["COLOR"] = color
     ctx.obj["VERBOSE"] = verbose
+
+    if ctx.invoked_subcommand is None:
+        click.echo(ctx.get_help())
+
+
+# =================================
+# REGISTERING SUB-COMMANDS & GROUPS
+# =================================
+cli.add_command(cred)

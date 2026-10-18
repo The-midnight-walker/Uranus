@@ -9,34 +9,12 @@ General-purpose utility functions and helpers used throughout
 the entire codebase.
 """
 
-from datetime import date
-import os, gzip, shutil, tarfile, zipfile, bz2
-import utils.shared as shr
-import time
-from pathlib import Path
-import configparser
+import os
+import shutil
+import bz2, gzip, zipfile, tarfile
+from datetime import datetime
 
-
-# =======
-# PARSING
-# =======
-
-
-def get_config() -> configparser.ConfigParser:
-    """get the configuration file (.init)
-
-    Returns:
-        The parsed configuration object.
-
-    Raises: FileNotFoundError, configparser.Error.
-    """
-    config_path = Path(shr.CONFIG_FILE_INIT)
-    cfg = configparser.ConfigParser()
-
-    with open(config_path, mode="r", encoding="utf-8") as f:
-        cfg.read_file(f)
-
-    return cfg
+from uranus.shared import SETTINGS as STGS
 
 
 # =====================================
@@ -44,9 +22,10 @@ def get_config() -> configparser.ConfigParser:
 # =====================================
 
 
-def add_date_suffix(filename: str):
-    """add the suffixe date : eg: req.txt-2005-8-6"""
-    return filename + "-" + shr.PROJECT_NAME + str(date.today())
+def add_date_suffix(filename: str) -> str:
+    """Add date and timestamp suffix: req.txt-uranus-2026-10-18_14-30-45"""
+    timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    return f"{filename}-{STGS.project_name}-{timestamp}"
 
 
 def make_gzip_backup(file: str) -> str:
@@ -60,7 +39,6 @@ def make_gzip_backup(file: str) -> str:
 
     Raises: FileNotFoundError, IsADirectoryError.
     """
-
     if not os.path.isfile(file):
         raise FileNotFoundError(f"Source file not found: {file}")
 
@@ -79,8 +57,8 @@ def make_gzip_backup(file: str) -> str:
     return gz_file
 
 
-def make_tarball(file: str):
-    """Make a backup of an existing file or directory and compress it using tar.gz.
+def make_tarball(file: str) -> str:
+    """Make a backup of an existing file or directory using tar.gz.
 
     Args:
         file: Path to the original file or directory to back up.
@@ -90,7 +68,6 @@ def make_tarball(file: str):
 
     Raises: FileNotFoundError, IsADirectoryError.
     """
-
     if not os.path.exists(file):
         raise FileNotFoundError(f"Source file or directory not found: {file}")
 
@@ -120,7 +97,6 @@ def make_bzip2_backup(file: str) -> str:
 
     Raises: FileNotFoundError, IsADirectoryError.
     """
-
     if not os.path.isfile(file):
         raise FileNotFoundError(f"Source file not found: {file}")
 
@@ -150,7 +126,6 @@ def make_zip_backup(file: str) -> str:
 
     Raises: FileNotFoundError, IsADirectoryError.
     """
-
     if not os.path.exists(file):
         raise FileNotFoundError(f"Source file or directory not found: {file}")
 
