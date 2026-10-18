@@ -8,17 +8,18 @@ Logging core
 Manages dual-handler logging output (console stdout and log file)
 """
 
+from dataclasses import dataclass
 import logging
+from pathlib import Path
 import re
+from types import SimpleNamespace as sns
+from typing import Any, ClassVar
+
 import click
 
-from pathlib import Path
-from dataclasses import dataclass
-from types import SimpleNamespace as sns
-
-from uranus.shared import SETTINGS as STGS
+from uranus.core.parsers import Parser
 from uranus.core.users import User
-from uranus.core.parse import Parser
+from uranus.shared import SETTINGS as STGS
 
 
 @dataclass(slots=True)
@@ -30,7 +31,7 @@ class LogConfig:
     console_log_timestamp: bool
     log_file_timestamp: bool
 
-    LOG_LEVELS = {
+    LOG_LEVELS: ClassVar[dict[int, dict[str, Any]]] = {
         logging.DEBUG: {
             "label": "DEBUG",
             "style": {"fg": "bright_black", "bold": False},
@@ -293,7 +294,7 @@ class LogConfig:
         file_path: str,
         colored: bool = True,
     ) -> None:
-        """Read a raw log file and reapply the exact same console printing format
+        """Read a raw log file and reapply the console printing format
         and colors as ClickColoredFormatter for console output.
         """
         path = Path(file_path)
@@ -322,7 +323,7 @@ class LogConfig:
                     match = log_pattern.match(line)
 
                     if not match:
-                        # Fallback: print the line raw if it doesn't match the format
+                        # Fallback: print raw line if format does not match
                         click.echo(line)
                         continue
 

@@ -2,15 +2,16 @@
 #
 # vim: set ts=8 sw=8 noet tw=80 cc=80 fo+=t :
 
-import time
-import click
-import logging as log
-from typing import Any
 from collections.abc import Callable
-from datetime import datetime
 from dataclasses import dataclass, field
+from datetime import datetime
 from enum import Enum
 from functools import total_ordering
+import logging as log
+import time
+from typing import Any
+
+import click
 
 from uranus.core.users import User
 
@@ -73,7 +74,7 @@ class AuditReport:
     description: str
     report: list[AuditResult] = field(default_factory=list)
     timestamp: float = field(default_factory=time.time)
-    severity: Severity = field(default_factory=lambda: Severity.CRIT)
+    severity: Severity = field(default_factory=lambda: Severity.HIGH)
 
     def add_result(self, result: AuditResult, state: bool) -> None:
         """Record a test result; `state` is True if the test passed."""
@@ -95,7 +96,7 @@ class AuditReport:
             if not res.status:  # Failed
                 message = f"{prefix}{res.message}"
 
-                if res.severity.level <= self.severity.level:
+                if res.severity >= self.severity:
                     User.print_err(message)
                 else:
                     User.print_warn(message)
@@ -113,8 +114,7 @@ class AuditReport:
         in which case AuditStatus.FAIL is returned.
         """
         blocking = any(
-            not r.status and r.severity.level <= self.severity.level
-            for r in self.report
+            not r.status and r.severity >= self.severity for r in self.report
         )
         return AuditStatus.FAIL if blocking else AuditStatus.PASS
 
@@ -143,6 +143,11 @@ class AuditReport:
     def passed(self) -> list[AuditResult]:
         """Returns only the passed tests."""
         return [r for r in self.report if r.status]
+
+    @property
+    def valides(self) -> list[AuditResult]:
+        """Alias for passed tests."""
+        return self.passed
 
     def print_report(self):
         """Process all collected audit reports at the end of the run."""

@@ -2,33 +2,99 @@
 #
 # vim: set ts=8 sw=8 noet tw=80 cc=80 fo+=t :
 
+import logging as log
+
 import click
-import logging
+
+import modules.credentials.units as creds
+from uranus.core.audits import Audit
 
 
-@click.group(name="credentials")
-def cred():
+@click.group(name="cred")
+@click.pass_context
+def cred(ctx: click.Context) -> None:
     """Manage user credentials and account security policies.
 
     Provides commands to audit, enforce, and harden local user account
-    configurations, password policies, and authentication mechanisms on Debian.
+    configurations, password policies, and authentication mechanisms on Debian
+    platforms.
     """
-    pass
+    ctx.ensure_object(dict)
 
 
-@cred.command(name="hello")
+@cred.group(name="audit")
+@click.option(
+    "-c",
+    "--config",
+    is_flag=True,
+    help="Audit current credentials configuration file",
+)
+@click.option(
+    "-e",
+    "--export",
+    type=click.Path(writable=True, path_type=str),
+    help="Save output in a file with the chosen format.",
+)
+@click.option(
+    "--format",
+    type=click.Choice(["yaml", "xml", "json", "txt"], case_sensitive=False),
+    default="txt",
+    help="Output format (yaml, xml, json, txt).",
+)
+@click.option(
+    "-s",
+    "--system",
+    is_flag=True,
+    help="Audit system files about users credentials",
+)
 @click.pass_context
-def say_hello(ctx: click.Context):
-    # Fetch verbosity count set by the main CLI group
-    verbose_level = ctx.obj.get("VERBOSE", 0)
+def audit(
+    ctx: click.Context,
+    config: bool,
+    system: bool,
+    export: str | None,
+    format: str,
+) -> None:
+    """Audit user credentials components."""
+    # TODO: verify if user have the SYS_ADMIN capability (root)
+    log.debug("Auditing credentials group")
 
-    # Global logger configuration applies automatically across all modules
-    logging.debug("Parsing /etc/shadow for weak configurations...")
-    logging.info("Checking PAM password complexity policies...")
+    ctx.ensure_object(dict)
 
-    if verbose_level > 0:
-        click.echo(
-            f"[VERBOSE LEVEL {verbose_level}] Detailed execution mode enabled."
-        )
+    # Fallback
+    if not system and not config:
+        system = True
+        config = True
 
-    click.echo("User credentials security audit complete.")
+    ctx.obj.update(
+        audit={
+            "system": system,
+            "config": config,
+            "output": {
+                "export_path": export,
+                "output_format": format.lower(),
+            },
+        }
+    )
+
+
+@audit.command(name="all")
+@click.pass_context
+def all_audit(ctx: click.Context) -> None:
+    """Audit all configurations."""
+    Audit.do_audit(
+        ctx=ctx,
+        sys_units=[creds.EtcLoginDefs.Audit.system_audit],
+        cfg_units=[creds.EtcLoginDefs.Audit.config_audit],
+    )
+
+
+@audit.command(name="login-defs")
+@click.pass_context
+def login_defs_audit(ctx: click.Context) -> None:
+    """Audit login.defs configurations."""
+    Audit.do_audit(
+        ctx=ctx,
+        sys_units=[creds.EtcLoginDefs.Audit.system_audit],
+        cfg_units=[creds.EtcLoginDefs.Audit.config_audit],
+    )

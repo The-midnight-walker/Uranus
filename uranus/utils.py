@@ -9,10 +9,13 @@ General-purpose utility functions and helpers used throughout
 the entire codebase.
 """
 
+import bz2
+from datetime import datetime
+import gzip
 import os
 import shutil
-import bz2, gzip, zipfile, tarfile
-from datetime import datetime
+import tarfile
+import zipfile
 
 from uranus.shared import SETTINGS as STGS
 
@@ -45,7 +48,7 @@ def make_gzip_backup(file: str) -> str:
     gz_file = f"{add_date_suffix(file)}.back.gz"
 
     if os.path.exists(gz_file):
-        if not os.path.isfile(gz_file):
+        if os.path.isdir(gz_file):
             raise IsADirectoryError(
                 f"Cannot overwrite directory with backup file: {gz_file}"
             )

@@ -14,8 +14,6 @@ def main() -> None:
     # init the logging feature
     LogConfig.init_logging()
 
-    # ----------- REGISTERING SUB-COMMANDS/GROUPS ---------
-
     # launch the command line
     cli()
 

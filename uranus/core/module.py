@@ -2,20 +2,21 @@
 #
 # vim: set ts=8 sw=8 noet tw=80 cc=80 fo+=t :
 
+"""
+ROOT/CORE MODULE & CLI UTILITIES INITIALIZATION
+===============================================
+
+Provide the main entry point and his configurations for the application,
+handling global CLI options such as verbosity and color output, and
+initializing the execution context.
+"""
+
 import logging as log
+
 import click
 
 from modules.credentials.module import cred
 from uranus.core.users import User
-
-"""
-    ROOT/CORE MODULE & CLI UTILITIES INITIALIZATION
-    ===============================================
-
-    Provide the main entry point and his configurations for the application,
-    handling global CLI options such as verbosity and color output, and
-    initializing the execution context.
-"""
 
 
 @click.group(name="root", invoke_without_command=True)
@@ -51,7 +52,9 @@ def cli(ctx: click.Context, verbose: bool, color: bool) -> None:
     log.debug(
         f"Initialize the CLI context [ color={color}, verbose={verbose} ]"
     )
-    user = User(colored=color, verbose=verbose)
+
+    # Configure User's prints
+    User.configure(colored=color, verbose=verbose)
 
     ctx.obj["COLOR"] = color
     ctx.obj["VERBOSE"] = verbose

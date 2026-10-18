@@ -10,13 +10,9 @@ Users utilities
 This file provides classes (`User` class)
 """
 
-import click
-from types import SimpleNamespace as sns
+from types import SimpleNamespace, SimpleNamespace as sns
 
-# ===========================
-# CONSOLE OUTPUT STYLE FORMAT
-# ===========================
-from types import SimpleNamespace
+import click
 
 
 class User:

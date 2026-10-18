@@ -2,9 +2,7 @@
 #
 # vim: set ts=8 sw=8 noet tw=80 cc=80 fo+=t :
 
-import logging
 import os
-
 from types import SimpleNamespace as sns
 
 # ===============
@@ -12,7 +10,7 @@ from types import SimpleNamespace as sns
 # ===============
 
 _debug_mode = os.environ.get("DEBUG", "0") == "1"
-_config_dir = os.environ.get("CONFIG_DIR", "credentials.ini")
+_config_dir = os.environ.get("CONFIG_DIR", "configs")
 
 # Project context
 SETTINGS = sns(
